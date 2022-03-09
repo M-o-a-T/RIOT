@@ -575,7 +575,7 @@ RIOT_VERSION_CODE ?= $(shell echo $(RIOT_VERSION) | \
 APPLICATION_MODULE ?= application_$(APPLICATION)
 
 # the binaries to link
-BASELIBS += $(APPLICATION_MODULE).module
+APPLIBS += $(APPLICATION_MODULE).module
 BASELIBS += $(APPDEPS)
 
 
@@ -647,6 +647,7 @@ ifneq (,$(IOTLAB_NODE))
 endif
 
 ELFFILE ?= $(BINDIR)/$(APPLICATION).elf
+LIBFILE ?= $(BINDIR)/lib$(APPLICATION).a
 HEXFILE ?= $(ELFFILE:.elf=.hex)
 BINFILE ?= $(ELFFILE:.elf=.bin)
 MAPFILE ?= $(ELFFILE:.elf=.map)
@@ -701,15 +702,19 @@ BUILDDEPS += $(MODULE_LIST_DIR)
 # Save value to verify it is not modified later
 _BASELIBS_VALUE_BEFORE_USAGE := $(BASELIBS)
 
+ARCHIVES += -L$(BINDIR) -l$(APPLICATION)
+
 # Linker rule
 # Only use --start-group when archives are defined
-ARCHIVES_GROUP = $(if $(ARCHIVES),$(LINKFLAGPREFIX)--start-group $(ARCHIVES) -lm $(LINKFLAGPREFIX)--end-group, -lm)
+ARCHIVES_GROUP = bin/bluepill/newlib_syscalls_default/syscalls.o $(ARCHIVES) -lm 
 
-$(ELFFILE): FORCE
+$(LIBFILE): FORCE
+	ar ruP $(LIBFILE) $$(find $(BASELIBS:%.module=$(BINDIR)/%/) -name "*.o" 2> /dev/null)
+$(ELFFILE): $(LIBFILE) FORCE
 ifeq ($(BUILDOSXNATIVE),1)
-  _LINK = $(if $(CPPMIX),$(LINKXX),$(LINK)) $$(find $(BASELIBS:%.module=$(BINDIR)/%/) -name "*.o" 2> /dev/null | sort) $(ARCHIVES_GROUP) $(LINKFLAGS) $(LINKFLAGPREFIX)-no_pie
+  _LINK = $(if $(CPPMIX),$(LINKXX),$(LINK)) $$(find $(APPLIBS:%.module=$(BINDIR)/%/) -name "*.o" 2> /dev/null | sort) $(LINKFLAGS) $(LINKFLAGPREFIX)-no_pie $(ARCHIVES_GROUP)
 else
-  _LINK = $(if $(CPPMIX),$(LINKXX),$(LINK)) $$(find $(BASELIBS:%.module=$(BINDIR)/%/) -name "*.o" 2> /dev/null | sort) $(ARCHIVES_GROUP) $(LINKFLAGS) $(LINKFLAGPREFIX)-Map=$(BINDIR)/$(APPLICATION).map
+  _LINK = $(if $(CPPMIX),$(LINKXX),$(LINK)) $$(find $(APPLIBS:%.module=$(BINDIR)/%/) -name "*.o" 2> /dev/null | sort) $(LINKFLAGS) $(LINKFLAGPREFIX)-Map=$(BINDIR)/$(APPLICATION).map $(ARCHIVES_GROUP)
 endif # BUILDOSXNATIVE
 
 ifeq ($(BUILD_IN_DOCKER),1)
@@ -722,7 +727,7 @@ link: ..compiler-check ..build-message $(BASELIBS) $(ARCHIVES) ..module-check
 endif # RIOTNOLINK
 
 $(ELFFILE): $(BASELIBS) $(ARCHIVES)
-	$(Q)$(_LINK) -o $@
+	$(Q)$(_LINK) -o $@ -v
 
 .PHONY: $(APPLICATION_MODULE).module
 
