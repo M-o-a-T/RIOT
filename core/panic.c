@@ -68,16 +68,14 @@ NORETURN void core_panic(core_panic_t crash_code, const char *message)
 #endif
         /* Call back app in case it wants to store some context */
         panic_app(crash_code, message);
-        LOG_ERROR("*** RIOT kernel panic:\n%s\n\n", message);
 #ifdef DEVELHELP
+        LOG_ERROR("*** RIOT kernel panic:\n%s\n\n", message);
 #ifdef MODULE_PS
         ps();
         LOG_ERROR("\n");
 #endif
 
         LOG_ERROR("*** halted.\n\n");
-#else
-        LOG_ERROR("*** rebooting...\n\n");
 #endif
     }
     /* disable watchdog and all possible sources of interrupts */
