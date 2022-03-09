@@ -47,11 +47,11 @@ static void *main_trampoline(void *arg)
     if (IS_USED(MODULE_AUTO_INIT)) {
         auto_init();
     }
-
+#ifdef DEVELHELP
     if (!IS_ACTIVE(CONFIG_SKIP_BOOT_MSG)) {
         LOG_INFO(CONFIG_BOOT_MSG_STRING "\n");
     }
-
+#endif
     main();
 
     return NULL;

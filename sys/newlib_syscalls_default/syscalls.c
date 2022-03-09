@@ -173,7 +173,11 @@ __attribute__((used)) void _fini(void)
  */
 __attribute__((used)) void _exit(int n)
 {
+#ifdef DEVELHELP
     LOG_INFO("#! exit %i: powering off\n", n);
+#else
+    (void)n;
+#endif
     pm_off();
     while(1);
 }
