@@ -58,7 +58,7 @@ int gpio_linux_setup(const char* gpiochip)
 
     if (fd < 0) {
         real_printf("GPIO: cannot open %s\n", gpiochip);
-        return fd;
+        return -errno;
     }
 
     if (real_ioctl(fd, GPIO_GET_CHIPINFO_IOCTL, &info) < 0) {
