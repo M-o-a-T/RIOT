@@ -40,15 +40,7 @@ typedef struct {
     __cpu_mask __bits[__CPU_SETSIZE / __NCPUBITS];
 } cpu_set_t;
 
-/**
- * @brief In all test the function has never been called, hence it is empty for now.
- */
-inline int sched_yield(void)
-{
-    puts("[ERROR] sched_yield called (defined in sched.h)\n");
-    return 0;
-}
-#else
+#endif /* BOARD_NATIVE */
 /**
  * @brief Compilation with g++ may require the declaration of this function.
  *
@@ -56,7 +48,6 @@ inline int sched_yield(void)
  * thread_arch.c.
  */
 extern int sched_yield(void);
-#endif /* BOARD_NATIVE */
 
 #ifdef __cplusplus
 }
