@@ -37,7 +37,13 @@ ifeq (,$(filter -std=%, $(CFLAGS)))
 endif
 
 ifeq ($(OS_ARCH),x86_64)
-  CFLAGS += -m32
+  ifneq ($(wildcard /usr/bin/i686-linux-gnu-gcc),)
+    override CC=/usr/bin/i686-linux-gnu-gcc
+    override CXX=/usr/bin/i686-linux-gnu-gcc
+    override LINK=/usr/bin/i686-linux-gnu-gcc
+  else
+    CFLAGS += -m32
+  endif
 endif
 ifneq (,$(filter -DDEVELHELP,$(CFLAGS)))
   CFLAGS += -fstack-protector-all
