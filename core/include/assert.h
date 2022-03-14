@@ -70,10 +70,9 @@ extern "C" {
 #endif /*__GNUC__*/
 #endif /*__NORETURN*/
 
-#ifdef NDEBUG
 #ifndef CPU_NATIVE
+#ifdef NDEBUG
 #define assert(ignore)((void)0)
-#endif
 #elif defined(DEBUG_ASSERT_VERBOSE)
 /**
  * @brief   Function to handle failed assertion
@@ -123,6 +122,7 @@ __NORETURN void _assert_failure(const char *file, unsigned line);
 __NORETURN void _assert_panic(void);
 #define assert(cond) ((cond) ? (void)0 : _assert_panic())
 #endif /* DEBUG_ASSERT_VERBOSE */
+#endif /* native */
 
 #if !defined __cplusplus
 #if !defined __USE_ISOC11
