@@ -19,6 +19,11 @@
  * @author      Martine Lenders <m.lenders@fu-berlin.de>
  */
 
+
+#ifdef CPU_NATIVE
+#include_next "assert.h"
+#endif
+
 #ifndef ASSERT_H
 #define ASSERT_H
 
@@ -66,7 +71,9 @@ extern "C" {
 #endif /*__NORETURN*/
 
 #ifdef NDEBUG
+#ifndef CPU_NATIVE
 #define assert(ignore)((void)0)
+#endif
 #elif defined(DEBUG_ASSERT_VERBOSE)
 /**
  * @brief   Function to handle failed assertion
@@ -118,6 +125,7 @@ __NORETURN void _assert_panic(void);
 #endif /* DEBUG_ASSERT_VERBOSE */
 
 #if !defined __cplusplus
+#if !defined __USE_ISOC11
 #if __STDC_VERSION__ >= 201112L
 /**
  * @brief c11 static_assert() macro
@@ -131,6 +139,7 @@ __NORETURN void _assert_panic(void);
  */
 #define static_assert(cond, ...) \
     { enum { static_assert_failed_on_div_by_0 = 1 / (!!(cond)) }; }
+#endif
 #endif
 #endif
 

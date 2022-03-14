@@ -23,6 +23,8 @@
 #ifndef NATIVE_SCHED_H
 #define NATIVE_SCHED_H
 
+#include <sched.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -30,6 +32,7 @@ extern "C" {
 #ifdef BOARD_NATIVE
 #include <stdio.h>
 
+#ifndef __NCPUBITS
 /*
  * Required to use some C++11 headers with g++ on the native board.
  */
@@ -39,6 +42,7 @@ typedef unsigned long int __cpu_mask;
 typedef struct {
     __cpu_mask __bits[__CPU_SETSIZE / __NCPUBITS];
 } cpu_set_t;
+#endif /* __NCPUBITS */
 
 #endif /* BOARD_NATIVE */
 /**
