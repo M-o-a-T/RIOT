@@ -40,6 +40,9 @@
 
 extern int main(void);
 
+void _late_init(void) __attribute__((weak));
+void _late_init(void) {}
+
 static void *main_trampoline(void *arg)
 {
     (void)arg;
@@ -47,6 +50,7 @@ static void *main_trampoline(void *arg)
     if (IS_USED(MODULE_AUTO_INIT)) {
         auto_init();
     }
+    _late_init();
 #ifdef DEVELHELP
     if (!IS_ACTIVE(CONFIG_SKIP_BOOT_MSG)) {
         LOG_INFO(CONFIG_BOOT_MSG_STRING "\n");
