@@ -454,6 +454,13 @@ static void _reset_handler(void)
     pm_reboot();
 }
 
+#define SAVED_ARG_MAX 10
+static struct _argsave {
+    char opt;
+    const char *arg;
+} saved[SAVED_ARG_MAX];
+static unsigned int savepos = 0;
+
 __attribute__((constructor)) static void startup(int argc, char **argv, char **envp)
 {
     _native_init_syscalls();
@@ -507,13 +514,18 @@ __attribute__((constructor)) static void startup(int argc, char **argv, char **e
                 }
                 force_stderr = true;
                 break;
-#ifdef MODULE_PERIPH_GPIO_LINUX
+
             case 'g':
-                if (gpio_linux_setup(optarg) < 0) {
+            case 'G':
+                if (savepos == SAVED_ARG_MAX) {
+                    /* too many saved args */
                     usage_exit(EXIT_FAILURE);
                 }
+                saved[savepos].opt = c;
+                saved[savepos].arg = optarg;
+                savepos++;
                 break;
-#endif
+
             case 'o':
                 stdouttype = _STDIOTYPE_FILE;
                 break;
@@ -667,7 +679,22 @@ __attribute__((constructor)) static void startup(int argc, char **argv, char **e
 
     register_interrupt(SIGUSR1, _reset_handler);
 
-    puts("RIOT native hardware initialization complete.\n");
     irq_enable();
+    puts("RIOT native hardware initialization complete.\n");
     kernel_init();
+}
+
+void _late_init(void)
+{
+    for(unsigned int spos = 0; spos < savepos; spos++) {
+        switch(saved[spos].opt) {
+#ifdef MODULE_PERIPH_GPIO_LINUX
+        case 'g':
+            if (gpio_linux_setup(saved[spos].arg) < 0) {
+                usage_exit(EXIT_FAILURE);
+            }
+            break;
+#endif
+        }
+    }
 }
