@@ -1,5 +1,7 @@
 NATIVEINCLUDES += -I$(RIOTCPU)/native/include -I$(RIOTBASE)/sys/include
 
+CFLAGS += -Wno-pedantic
+
 # Local include for OSX
 ifeq ($(BUILDOSXNATIVE),1)
   NATIVEINCLUDES += -I$(RIOTCPU)/native/osx-libc-extra
