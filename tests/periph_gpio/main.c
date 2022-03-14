@@ -20,11 +20,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "irq.h"
 #include "shell.h"
 #include "benchmark.h"
 #include "periph/gpio.h"
+#include "gpiodev_socket.h"
 #include "ztimer.h"
 
 #define BENCH_RUNS_DEFAULT      (1000UL * 100)
@@ -34,6 +36,26 @@
 static void cb(void *arg)
 {
     printf("INT: external interrupt from pin %i\n", (int)arg);
+}
+#endif
+
+#ifdef MODULE_PERIPH_GPIO_SOCKET
+static int init_socket(int argc, char **argv)
+{
+    int npins, port;
+
+    if (argc < 3) {
+        printf("usage: %s <socket> <nr_pins>\n", argv[0]);
+        return 1;
+    }
+    npins = atoi(argv[2]);
+    port = gpio_socket_setup(argv[1], npins);
+    if(port < 0) {
+        printf("Error connecting to %s: %s\n", argv[1], strerror(-port));
+        return 1;
+    }
+    printf("Port %d connected to %s\n", port, argv[1]);
+    return 0;
 }
 #endif
 
@@ -402,6 +424,9 @@ static int bench(int argc, char **argv)
 }
 
 static const shell_command_t shell_commands[] = {
+#ifdef MODULE_PERIPH_GPIO_SOCKET
+    { "attach", "attach to a socket", init_socket },
+#endif
     { "init_out", "init as output (push-pull mode)", init_out },
     { "init_in", "init as input w/o pull resistor", init_in },
     { "init_in_pu", "init as input with pull-up", init_in_pu },

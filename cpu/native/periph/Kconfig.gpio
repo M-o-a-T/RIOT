@@ -5,19 +5,22 @@
 # directory for more details.
 #
 
-choice NATIVE_GPIO_IMPLEMENTATION
-    bool "Native GPIO peripheral implementation"
+choice
+    prompt "Native GPIO peripheral implementation"
     depends on MODULE_PERIPH_GPIO
     depends on CPU_ARCH_NATIVE
     depends on TEST_KCONFIG
-    default MODULE_PERIPH_GPIO_LINUX if NATIVE_OS_LINUX
+    default MODULE_PERIPH_GPIO_SOCKET
 
-config MODULE_PERIPH_GPIO_LINUX
-    bool "Linux GPIO"
-    depends on NATIVE_OS_LINUX
+config MODULE_PERIPH_GPIO_SOCKET
+    bool "Socket-based mock GPIO"
+
+#config MODULE_PERIPH_GPIO_LINUX
+#    bool "Linux GPIO"
+#    depends on NATIVE_OS_LINUX
 
 config MODULE_PERIPH_GPIO_MOCK
-    bool "Mock"
+    bool "No-Op mock GPIO"
 
 endchoice
 
@@ -25,10 +28,15 @@ endchoice
 # modules are handled in Makefile. We need to define them to keep the list the
 # same for now. We should be able to remove them later on.
 
-config MODULE_PERIPH_INIT_GPIO_LINUX
+#config MODULE_PERIPH_INIT_GPIO_LINUX
+#    bool
+#    default y if MODULE_PERIPH_INIT
+#    depends on MODULE_PERIPH_GPIO_LINUX
+
+config MODULE_PERIPH_INIT_GPIO_SOCKET
     bool
     default y if MODULE_PERIPH_INIT
-    depends on MODULE_PERIPH_GPIO_LINUX
+    depends on MODULE_PERIPH_GPIO_SOCKET
 
 config MODULE_PERIPH_INIT_GPIO_MOCK
     bool

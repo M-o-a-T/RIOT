@@ -45,7 +45,7 @@ extern "C" {
 #define PROVIDES_PM_LAYERED_OFF
 
 /* GPIO configuration only if the module is available (=Linux) */
-#if defined(MODULE_PERIPH_GPIO_LINUX) || defined(DOXYGEN)
+#if defined(MODULE_PERIPH_GPIO_LINUX) || defined(MODULE_PERIPH_GPIO_SOCKET) || defined(DOXYGEN)
 #include <linux/gpio.h>
 
 /**

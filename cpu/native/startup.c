@@ -84,6 +84,9 @@ netdev_tap_params_t netdev_tap_params[NETDEV_TAP_MAX];
 #ifdef MODULE_PERIPH_GPIO_LINUX
 #include "gpiodev_linux.h"
 #endif
+#ifdef MODULE_PERIPH_GPIO_SOCKET
+#include "gpiodev_socket.h"
+#endif
 #ifdef MODULE_NATIVE_CLI_EUI_PROVIDER
 #include "native_cli_eui_provider.h"
 #endif
@@ -100,6 +103,9 @@ extern char eeprom_file[EEPROM_FILEPATH_MAX_LEN];
 static const char short_opts[] = ":hi:s:deEoc:"
 #ifdef MODULE_PERIPH_GPIO_LINUX
     "g:"
+#endif
+#ifdef MODULE_PERIPH_GPIO_SOCKET
+    "G:"
 #endif
 #ifdef MODULE_MTD_NATIVE
     "m:"
@@ -129,6 +135,9 @@ static const struct option long_opts[] = {
     { "uart-tty", required_argument, NULL, 'c' },
 #ifdef MODULE_PERIPH_GPIO_LINUX
     { "gpio", required_argument, NULL, 'g' },
+#endif
+#ifdef MODULE_PERIPH_GPIO_SOCKET
+    { "socket", required_argument, NULL, 'G' },
 #endif
 #ifdef MODULE_MTD_NATIVE
     { "mtd", required_argument, NULL, 'm' },
@@ -281,6 +290,9 @@ void usage_exit(int status)
 #ifdef MODULE_PERIPH_GPIO_LINUX
     real_printf(" [-g <gpiochip>]");
 #endif
+#ifdef MODULE_PERIPH_GPIO_SOCKET
+    real_printf(" [-G <socket>:<bits>]");
+#endif
     real_printf(" [-i <id>] [-d] [-e|-E] [-o] [-c <tty>]");
 #if defined(MODULE_SOCKET_ZEP) && (SOCKET_ZEP_MAX > 0)
     real_printf(" -z [[<laddr>:<lport>,]<raddr>:<rport>]");
@@ -327,6 +339,13 @@ void usage_exit(int status)
 "        specify gpiochip device for GPIO access.\n"
 "        This argument can be used multiple times.\n"
 "        Example: --gpio=/dev/gpiochip0 uses gpiochip0 for port 0\n"
+#endif
+#ifdef MODULE_PERIPH_GPIO_SOCKET
+"    -G <socket>:<bits>, --socket=<socket>:<bits>\n"
+"        specify a socket for simulated GPIO access.\n"
+"        This argument can be used multiple times.\n"
+"        Missing <bits> default to 8.\n"
+"        Example: --socket=/tmp/sockdrv:8 uses /tmp/sockdrv for port 0\n"
 #endif
 #if defined(MODULE_SOCKET_ZEP) && (SOCKET_ZEP_MAX > 0)
 "    -z [<laddr>:<lport>,]<raddr>:<rport> --zep=[<laddr>:<lport>,]<raddr>:<rport>\n"
@@ -692,6 +711,21 @@ void _late_init(void)
         case 'g':
             if (gpio_linux_setup(saved[spos].arg) < 0) {
                 usage_exit(EXIT_FAILURE);
+            }
+            break;
+#endif
+#ifdef MODULE_PERIPH_GPIO_SOCKET
+        case 'G':
+            {
+                int n = 8;
+                char *colon = strrchr(saved[spos].arg,':');
+                if (colon) {
+                    *colon++ = 0;
+                    n = atoi(colon);
+                }
+                if (gpio_socket_setup(saved[spos].arg,n) < 0) {
+                    usage_exit(EXIT_FAILURE);
+                }
             }
             break;
 #endif

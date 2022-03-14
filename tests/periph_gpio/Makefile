@@ -7,13 +7,14 @@ FEATURES_OPTIONAL += periph_gpio_irq
 FEATURES_OPTIONAL += periph_gpio_fast_read
 FEATURES_OPTIONAL += periph_gpio_tamper_wake
 
+
 USEMODULE += shell
 USEMODULE += shell_commands
 USEMODULE += benchmark
 
 # disable native GPIOs for automatic test
 ifeq (native,$(BOARD))
-  USEMODULE += periph_gpio_mock
+  USEMODULE += periph_gpio_socket
   # the same for Kconfig
   ifeq (1,$(TEST_KCONFIG))
     KCONFIG_ADD_CONFIG += $(APPDIR)/app.config.test.native
