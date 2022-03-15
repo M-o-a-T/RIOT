@@ -1,5 +1,7 @@
 # Object files
 *.o
+# Object dependencies
+*.d
 # Target files
 *.elf
 # Documentation artifacts
