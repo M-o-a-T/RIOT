@@ -65,11 +65,14 @@
 extern "C" {
 #endif
 
+#ifndef STDIO_UART_PORT
+#define STDIO_UART_PORT 0
+#endif
 #ifndef STDIO_UART_DEV
 /**
  * @brief UART device to use for STDIO
  */
-#define STDIO_UART_DEV          UART_DEV(0)
+#define STDIO_UART_DEV          UART_DEV(STDIO_UART_PORT)
 #endif
 
 #ifndef STDIO_UART_BAUDRATE

@@ -34,7 +34,10 @@ extern "C" {
 /**
  * @brief Use the UART-2 for STDIO on this board
  */
-#define STDIO_UART_DEV      UART_DEV(2)
+#ifndef STDIO_UART_PORT
+#define STDIO_UART_PORT 2
+#endif
+#define STDIO_UART_DEV      UART_DEV(STDIO_UART_PORT)
 
 /**
  * @name   Baudrate for STDIO terminal
