@@ -12,7 +12,7 @@ RIOTBASE ?= $(CURDIR)/../..
 # development process:
 DEVELHELP ?= 1
 
-CFLAGS += -DSTDIO_UART_PORT=0
+CFLAGS += -DSTDIO_UART_PORT=0 -DUART_TXBUF_SIZE=4
 
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
