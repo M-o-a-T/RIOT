@@ -11,6 +11,8 @@ RIOTBASE ?= $(CURDIR)/../..
 RR ?= 1
 
 USEMODULE += ztimer_usec
+USEMODULE += uart
+USEMODULE += periph_uart_nonblocking
 
 ifeq (1,$(RR))
   USEMODULE += sched_round_robin
