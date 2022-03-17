@@ -53,9 +53,8 @@ int main(void)
         delay();
 #ifdef LED0_TOGGLE
         LED0_TOGGLE;
-#else
-        puts("Blink! (No LED present or configured...)");
 #endif
+        puts("Blink!");
     }
 
     return 0;
