@@ -64,9 +64,12 @@ extern "C" {
 #define DXL_DIR_PIN         GPIO_PIN(PORT_B, 5)
 
 /**
- * @brief Use the USART2 for STDIO on this board
+ * @brief Use the USART1 for STDIO on this board
  */
-#define STDIO_UART_DEV      UART_DEV(0)
+#ifndef STDIO_UART_PORT
+#define STDIO_UART_PORT 0
+#endif
+#define STDIO_UART_DEV      UART_DEV(STDIO_UART_PORT)
 
 /**
  * @name Override with ROBOTIS Bluetooth antenna baudrate for STDIO

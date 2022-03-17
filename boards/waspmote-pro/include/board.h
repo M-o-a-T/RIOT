@@ -38,11 +38,14 @@ extern "C" {
  *          being used
  */
 #ifdef XBEE_UART
+#ifndef STDIO_UART_PORT
 #if XBEE_UART == 0
-#define STDIO_UART_DEV       (UART_DEV(1))
+#define STDIO_UART_PORT      1
 #else
-#define STDIO_UART_DEV       (UART_DEV(0))
+#define STDIO_UART_PORT      0
 #endif
+#endif
+#define STDIO_UART_DEV       (UART_DEV(STDIO_UART_PORT))
 #endif
 
 /**

@@ -39,8 +39,11 @@ extern "C" {
  * Dont want to include the stdio header, so redefine the default value
  *
  */
+#ifndef STDIO_UART_PORT
+#define STDIO_UART_PORT 0
+#endif
 #ifndef STDIO_UART_DEV
-#define STDIO_UART_DEV              (UART_DEV(0))
+#define STDIO_UART_DEV              (UART_DEV(STDIO_UART_PORT))
 #endif
 /**
  * @brief   OpenWSN default uart dev.
